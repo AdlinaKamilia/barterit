@@ -12,10 +12,22 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
   String mainTitle = "Messages";
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(mainTitle),
+        title: Text(
+          mainTitle,
+        ),
       ),
     );
   }

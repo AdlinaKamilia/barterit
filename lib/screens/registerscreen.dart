@@ -36,6 +36,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     screenH = MediaQuery.of(context).size.height;
     screenW = MediaQuery.of(context).size.width;
@@ -47,21 +53,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
         elevation: 0,
       ),
       body: Stack(children: [
-        SizedBox(
+        Container(
           height: screenH * 0.4,
           width: screenW,
-          child: Image.asset(
-            "assets/images/bgprofile.png",
-            fit: BoxFit.cover,
-            width: screenW,
-          ),
+          color: Colors.blue.shade100,
         ),
         Container(
           height: screenH,
           width: screenW,
           margin: EdgeInsets.only(
               top: screenH /
-                  50), //to adjust the margin of the card starts where..
+                  8), //to adjust the margin of the card starts where..
           padding: const EdgeInsets.only(left: 5, right: 5),
           child: SingleChildScrollView(
             child: Column(
@@ -169,7 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               },
                               decoration: InputDecoration(
                                   labelText: 'Password',
-                                  labelStyle: TextStyle(),
+                                  labelStyle: const TextStyle(),
                                   icon: const Icon(Icons.lock_outline),
                                   focusedBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(width: 2.0),

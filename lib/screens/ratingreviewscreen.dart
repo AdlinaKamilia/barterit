@@ -12,10 +12,22 @@ class RatingReviewScreen extends StatefulWidget {
 class _RatingReviewScreenState extends State<RatingReviewScreen> {
   String mainTitle = "Rating And Review";
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(mainTitle),
+        title: Text(
+          mainTitle,
+        ),
       ),
     );
   }

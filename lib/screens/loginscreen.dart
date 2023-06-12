@@ -33,6 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     screenH = MediaQuery.of(context).size.height;
     screenW = MediaQuery.of(context).size.width;
@@ -57,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
             width: screenW,
             margin: EdgeInsets.only(
                 top: screenH /
-                    5), //to adjust the margin of the card starts where..
+                    4), //to adjust the margin of the card starts where..
             padding: const EdgeInsets.only(left: 5, right: 5),
             child: SingleChildScrollView(
               child: Column(
@@ -120,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                                 decoration: InputDecoration(
                                     labelText: 'Password',
-                                    labelStyle: TextStyle(),
+                                    labelStyle: const TextStyle(),
                                     icon: const Icon(Icons.lock_outline),
                                     focusedBorder: const OutlineInputBorder(
                                       borderSide: BorderSide(width: 2.0),
@@ -229,7 +234,6 @@ class _LoginScreenState extends State<LoginScreen> {
             'email': email,
             'password': password,
           }).then((response) {
-        print(response.body);
         if (response.statusCode == 200) {
           var jsondata = jsonDecode(response.body);
           if (jsondata['status'] == 'success') {
