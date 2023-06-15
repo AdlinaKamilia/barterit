@@ -130,12 +130,13 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
     );
   }
 
-  goToUserItemScreen() {
+  goToUserItemScreen() async {
     if (widget.user.id != "na") {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (content) => UserItemScreen(user: widget.user)));
+      await loadAllItems();
     } else {
       showDialog(
           context: context,
@@ -169,7 +170,6 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
             );
           });
     }
-    loadAllItems();
   }
 
   loadAllItems() {

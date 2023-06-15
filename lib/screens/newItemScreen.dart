@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:barterit/screens/itemListingScreen.dart';
 import 'package:barterit/screens/usersItem.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';

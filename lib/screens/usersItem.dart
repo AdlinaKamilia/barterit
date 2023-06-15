@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:barterit/screens/mainscreen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:barterit/models/items.dart';
 import 'package:barterit/models/user.dart';
