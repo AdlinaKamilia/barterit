@@ -10,13 +10,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'BarterIt',
-        theme: ThemeData(primarySwatch: Colors.green),
-        home: const DefaultTextStyle(
-          style: TextStyle(
-            fontFamily:
-                'Times New Roman', // Replace with your desired font family
-          ),
-          child: SplashScreen(),
-        ));
+        theme: ThemeData(
+            primarySwatch: Colors.green,
+            textTheme: const TextTheme(
+                bodyMedium: TextStyle(
+              fontFamily: 'Times New Roman',
+            ))),
+        home: const SplashScreen());
   }
 }

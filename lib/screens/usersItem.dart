@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../myConfig.dart';
+import 'itemDetailScreen.dart';
 
 class UserItemScreen extends StatefulWidget {
   final User user;
@@ -23,10 +24,13 @@ class _UserItemScreenState extends State<UserItemScreen> {
   List<Item> itemsList = <Item>[];
   String mainTitle = "User's Items List";
   int axisCount = 2;
+  int numofpage = 1, curpage = 1;
+  int numberofresult = 0;
+  var color;
   @override
   void initState() {
     super.initState();
-    loadUserItems();
+    loadUserItems(1);
   }
 
   @override
@@ -66,6 +70,16 @@ class _UserItemScreenState extends State<UserItemScreen> {
                       print(itemsList[index].itemId);
                       return Card(
                         child: InkWell(
+                          onTap: () {
+                            Item items =
+                                Item.fromJson(itemsList[index].toJson());
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (content) => ItemDetail(
+                                        user: widget.user, item: items)));
+                            loadUserItems(1);
+                          },
                           child: Column(children: [
                             SizedBox(
                               height: 130,
@@ -96,7 +110,33 @@ class _UserItemScreenState extends State<UserItemScreen> {
                         ),
                       );
                     }),
-                  ))
+                  )),
+                  SizedBox(
+                    height: 50,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: numofpage,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        //build the list for textbutton with scroll
+                        if ((curpage - 1) == index) {
+                          //set current page number active
+                          color = Colors.blue;
+                        } else {
+                          color = Colors.black;
+                        }
+                        return TextButton(
+                            onPressed: () {
+                              curpage = index + 1;
+                              loadUserItems(index + 1);
+                            },
+                            child: Text(
+                              (index + 1).toString(),
+                              style: TextStyle(color: color, fontSize: 15),
+                            ));
+                      },
+                    ),
+                  ),
                 ],
               ),
       ),
@@ -108,7 +148,7 @@ class _UserItemScreenState extends State<UserItemScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (content) => NewItemScreen(user: widget.user)));
-            loadUserItems();
+            loadUserItems(1);
           } else {
             showDialog(
                 context: context,
@@ -150,14 +190,18 @@ class _UserItemScreenState extends State<UserItemScreen> {
     );
   }
 
-  loadUserItems() {
+  loadUserItems(int page) {
     http.post(Uri.parse("${MyConfig().server}/barterit/php/load_items.php"),
-        body: {"userid": widget.user.id}).then((response) {
+        body: {
+          "userid": widget.user.id,
+        }).then((response) {
       itemsList.clear();
 
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == "success") {
+          numofpage = int.parse(jsondata['numofpage']);
+          numberofresult = int.parse(jsondata['numberofresult']);
           var extractData = jsondata['data'];
           extractData['items'].forEach((v) {
             itemsList.add(Item.fromJson(v));
@@ -173,7 +217,7 @@ class _UserItemScreenState extends State<UserItemScreen> {
     await Future.delayed(const Duration(seconds: 2));
 
     setState(() {
-      loadUserItems();
+      loadUserItems(1);
     });
   }
 }
