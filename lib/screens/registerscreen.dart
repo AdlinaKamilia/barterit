@@ -367,6 +367,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == 'success') {
+          insertCredit(jsondata['data'].toString());
           ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Registration Successfully")));
         } else {
@@ -378,6 +379,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Registrations Failed")));
         Navigator.pop(context);
+      }
+    });
+  }
+
+  void insertCredit(String userId) {
+    http.post(Uri.parse("${MyConfig().server}/barterit/php/insert_credit.php"),
+        body: {
+          "userId": userId,
+          "creditAdd": "0",
+          "creditHold": "0",
+        }).then((response) {
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(response.body);
+        if (jsondata['status'] == 'success') {
+          print("credit settle");
+        } else {
+          print("credit failed");
+        }
+      } else {
+        print("credit failed");
       }
     });
   }

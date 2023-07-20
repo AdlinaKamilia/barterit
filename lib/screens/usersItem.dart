@@ -56,6 +56,9 @@ class _UserItemScreenState extends State<UserItemScreen> {
               )
             : Column(
                 children: [
+                  SizedBox(
+                    height: 20,
+                  ),
                   Text(
                     "Total Number of Users Item : ${itemsList.length} ",
                     style: const TextStyle(
@@ -67,7 +70,6 @@ class _UserItemScreenState extends State<UserItemScreen> {
                       child: GridView.count(
                     crossAxisCount: axisCount,
                     children: List.generate(itemsList.length, (index) {
-                      print(itemsList[index].itemId);
                       return Card(
                         child: InkWell(
                           onTap: () {
@@ -82,7 +84,7 @@ class _UserItemScreenState extends State<UserItemScreen> {
                           },
                           child: Column(children: [
                             SizedBox(
-                              height: 130,
+                              height: 1 / 5 * screenH,
                               child: CachedNetworkImage(
                                 width: screenW,
                                 fit: BoxFit.cover,
@@ -193,6 +195,7 @@ class _UserItemScreenState extends State<UserItemScreen> {
   loadUserItems(int page) {
     http.post(Uri.parse("${MyConfig().server}/barterit/php/load_items.php"),
         body: {
+          "pageno": page.toString(),
           "userid": widget.user.id,
         }).then((response) {
       itemsList.clear();

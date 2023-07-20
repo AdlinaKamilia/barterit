@@ -68,224 +68,232 @@ class _NewItemScreenState extends State<NewItemScreen> {
         foregroundColor: Theme.of(context).colorScheme.secondary,
         elevation: 0,
       ),
-      body: Column(
-        children: [
-          imgNo == 0
-              ? GestureDetector(
-                  onTap: () {
-                    _selectFromCamera();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                    child: Card(
-                        child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: _image == null
-                              ? const AssetImage("assets/images/camera.jpg")
-                              : FileImage(_image!) as ImageProvider,
-                          fit: BoxFit.contain,
-                        ),
+      body: SingleChildScrollView(
+        child: Container(
+          height: screenH,
+          width: screenW,
+          child: Column(
+            children: [
+              imgNo == 0
+                  ? GestureDetector(
+                      onTap: () {
+                        _selectFromCamera();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        child: Card(
+                            child: Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: _image == null
+                                  ? const AssetImage("assets/images/camera.jpg")
+                                  : FileImage(_image!) as ImageProvider,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        )),
                       ),
-                    )),
-                  ),
-                )
-              : Center(
-                  child: SizedBox(
-                    height: 250,
-                    child: PageView.builder(
-                        itemCount: 3,
-                        controller: PageController(viewportFraction: 0.9),
-                        onPageChanged: (int index) =>
-                            setState(() => _index = index),
-                        itemBuilder: (BuildContext context, int index) {
-                          if (index == 0) {
-                            return image1();
-                          } else if (index == 1) {
-                            return image2();
-                          } else {
-                            return image3();
-                          }
-                        }),
-                  ),
-                ),
-          Expanded(
-              flex: 6,
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Form(
-                    key: _formKey,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Row(
+                    )
+                  : Center(
+                      child: SizedBox(
+                        height: 250,
+                        child: PageView.builder(
+                            itemCount: 3,
+                            controller: PageController(viewportFraction: 0.9),
+                            onPageChanged: (int index) =>
+                                setState(() => _index = index),
+                            itemBuilder: (BuildContext context, int index) {
+                              if (index == 0) {
+                                return image1();
+                              } else if (index == 1) {
+                                return image2();
+                              } else {
+                                return image3();
+                              }
+                            }),
+                      ),
+                    ),
+              Expanded(
+                  flex: 6,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Form(
+                        key: _formKey,
+                        child: SingleChildScrollView(
+                          child: Column(
                             children: [
-                              const Icon(
-                                Icons.category,
-                                color: Colors.green,
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.category,
+                                    color: Colors.green,
+                                  ),
+                                  const SizedBox(width: 20),
+                                  SizedBox(
+                                      height: 60,
+                                      child: DropdownButton(
+                                        value: selectType,
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            selectType = newValue!;
+                                          });
+                                        },
+                                        items: categoryList.map((selectType) {
+                                          return DropdownMenuItem(
+                                              value: selectType,
+                                              child: Text(selectType));
+                                        }).toList(),
+                                      )),
+                                ],
                               ),
-                              const SizedBox(width: 20),
-                              SizedBox(
-                                  height: 60,
-                                  child: DropdownButton(
-                                    value: selectType,
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        selectType = newValue!;
-                                      });
-                                    },
-                                    items: categoryList.map((selectType) {
-                                      return DropdownMenuItem(
-                                          value: selectType,
-                                          child: Text(selectType));
-                                    }).toList(),
-                                  )),
-                            ],
-                          ),
-                          TextFormField(
-                            textInputAction: TextInputAction.next,
-                            validator: (val) => val!.isEmpty || (val.length < 5)
-                                ? "Item Name must be longer than 5"
-                                : null,
-                            keyboardType: TextInputType.text,
-                            onFieldSubmitted: (v) {},
-                            controller: _itemNameC,
-                            decoration: const InputDecoration(
-                                labelText: 'Item Name',
-                                labelStyle: TextStyle(),
-                                icon: Icon(
-                                  Icons.abc_outlined,
-                                  size: 40,
-                                ),
-                                iconColor: Colors.blue,
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1, color: Colors.green))),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            textInputAction: TextInputAction.next,
-                            validator: (val) =>
-                                val!.isEmpty || (val.length < 10)
-                                    ? "Item description must be longer than 10"
-                                    : null,
-                            keyboardType: TextInputType.text,
-                            maxLines: 4,
-                            onFieldSubmitted: (v) {},
-                            controller: _itemDescC,
-                            decoration: const InputDecoration(
-                                labelText: 'Item Description',
-                                labelStyle: TextStyle(),
-                                icon: Icon(
-                                  Icons.description_outlined,
-                                  size: 30,
-                                ),
-                                iconColor: Colors.green,
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1, color: Colors.blue))),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              Flexible(
-                                flex: 5,
-                                child: TextFormField(
-                                    textInputAction: TextInputAction.next,
-                                    validator: (val) => val!.isEmpty
-                                        ? "Item price needs a value"
+                              TextFormField(
+                                textInputAction: TextInputAction.next,
+                                validator: (val) =>
+                                    val!.isEmpty || (val.length < 5)
+                                        ? "Item Name must be longer than 5"
                                         : null,
-                                    onFieldSubmitted: (v) {},
-                                    controller: _itemPriceC,
-                                    keyboardType: TextInputType.number,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Item Price',
-                                        labelStyle: TextStyle(),
-                                        icon: Icon(
-                                          Icons.money,
-                                          size: 30,
-                                        ),
-                                        iconColor: Colors.blue,
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              width: 1, color: Colors.green),
-                                        ))),
+                                keyboardType: TextInputType.text,
+                                onFieldSubmitted: (v) {},
+                                controller: _itemNameC,
+                                decoration: const InputDecoration(
+                                    labelText: 'Item Name',
+                                    labelStyle: TextStyle(),
+                                    icon: Icon(
+                                      Icons.abc_outlined,
+                                      size: 40,
+                                    ),
+                                    iconColor: Colors.blue,
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 1, color: Colors.green))),
                               ),
                               const SizedBox(
                                 height: 10,
                               ),
-                              Flexible(
-                                flex: 5,
-                                child: TextFormField(
-                                    textInputAction: TextInputAction.next,
-                                    validator: (val) => val!.isEmpty
-                                        ? "Quantity should be more than 0"
-                                        : null,
-                                    controller: _itemQtyC,
-                                    keyboardType: TextInputType.number,
-                                    decoration: const InputDecoration(
-                                        labelText: 'Item Quantity',
-                                        labelStyle: TextStyle(),
-                                        icon: Icon(
-                                          Icons.numbers,
-                                          size: 30,
-                                        ),
-                                        iconColor: Colors.green,
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              width: 1, color: Colors.blue),
-                                        ))),
+                              TextFormField(
+                                textInputAction: TextInputAction.next,
+                                validator: (val) => val!.isEmpty ||
+                                        (val.length < 10)
+                                    ? "Item description must be longer than 10"
+                                    : null,
+                                keyboardType: TextInputType.text,
+                                maxLines: 4,
+                                onFieldSubmitted: (v) {},
+                                controller: _itemDescC,
+                                decoration: const InputDecoration(
+                                    labelText: 'Item Description',
+                                    labelStyle: TextStyle(),
+                                    icon: Icon(
+                                      Icons.description_outlined,
+                                      size: 30,
+                                    ),
+                                    iconColor: Colors.green,
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 1, color: Colors.blue))),
                               ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  Flexible(
+                                    flex: 5,
+                                    child: TextFormField(
+                                        textInputAction: TextInputAction.next,
+                                        validator: (val) => val!.isEmpty
+                                            ? "Item price needs a value"
+                                            : null,
+                                        onFieldSubmitted: (v) {},
+                                        controller: _itemPriceC,
+                                        keyboardType: TextInputType.number,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Item Price',
+                                            labelStyle: TextStyle(),
+                                            icon: Icon(
+                                              Icons.money,
+                                              size: 30,
+                                            ),
+                                            iconColor: Colors.blue,
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  width: 1,
+                                                  color: Colors.green),
+                                            ))),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Flexible(
+                                    flex: 5,
+                                    child: TextFormField(
+                                        textInputAction: TextInputAction.next,
+                                        validator: (val) => val!.isEmpty
+                                            ? "Quantity should be more than 0"
+                                            : null,
+                                        controller: _itemQtyC,
+                                        keyboardType: TextInputType.number,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Item Quantity',
+                                            labelStyle: TextStyle(),
+                                            icon: Icon(
+                                              Icons.numbers,
+                                              size: 30,
+                                            ),
+                                            iconColor: Colors.green,
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  width: 1, color: Colors.blue),
+                                            ))),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(children: [
+                                Flexible(
+                                  flex: 5,
+                                  child: TextFormField(
+                                      controller: _localC,
+                                      readOnly: true,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Locality',
+                                          labelStyle: TextStyle(),
+                                          icon: Icon(Icons.map),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(width: 1),
+                                          ))),
+                                ),
+                                Flexible(
+                                  flex: 5,
+                                  child: TextFormField(
+                                      controller: _stateC,
+                                      readOnly: true,
+                                      decoration: const InputDecoration(
+                                          labelText: 'State',
+                                          labelStyle: TextStyle(),
+                                          icon: Icon(Icons.place),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(width: 1),
+                                          ))),
+                                ),
+                              ]),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    showInsertDialog();
+                                  },
+                                  child: const Text("Insert Item")),
                             ],
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(children: [
-                            Flexible(
-                              flex: 5,
-                              child: TextFormField(
-                                  controller: _localC,
-                                  readOnly: true,
-                                  decoration: const InputDecoration(
-                                      labelText: 'Locality',
-                                      labelStyle: TextStyle(),
-                                      icon: Icon(Icons.map),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(width: 1),
-                                      ))),
-                            ),
-                            Flexible(
-                              flex: 5,
-                              child: TextFormField(
-                                  controller: _stateC,
-                                  readOnly: true,
-                                  decoration: const InputDecoration(
-                                      labelText: 'State',
-                                      labelStyle: TextStyle(),
-                                      icon: Icon(Icons.place),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(width: 1),
-                                      ))),
-                            ),
-                          ]),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          ElevatedButton(
-                              onPressed: () {
-                                showInsertDialog();
-                              },
-                              child: const Text("Insert Item")),
-                        ],
-                      ),
-                    )),
-              ))
-        ],
+                        )),
+                  ))
+            ],
+          ),
+        ),
       ),
     );
   }

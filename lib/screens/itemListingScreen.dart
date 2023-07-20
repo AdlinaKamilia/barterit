@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:barterit/screens/barterProcess.dart';
+import 'package:barterit/screens/barterRequestScreen.dart';
+import 'package:barterit/screens/barterSellerScreen.dart';
 import 'package:barterit/screens/usersItem.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:barterit/models/items.dart';
@@ -13,8 +16,8 @@ import '../myConfig.dart';
 import 'itemDetailScreen.dart';
 
 class ItemListingScreen extends StatefulWidget {
-  final User user;
-  const ItemListingScreen({super.key, required this.user});
+  late User user;
+  ItemListingScreen({super.key, required this.user});
 
   @override
   State<ItemListingScreen> createState() => _ItemListingScreenState();
@@ -34,6 +37,7 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
   void initState() {
     super.initState();
     loadAllItems(1);
+    loadUser();
   }
 
   @override
@@ -55,7 +59,64 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
               onPressed: () {
                 showSearchDialog();
               },
-              icon: const Icon(Icons.search))
+              icon: const Icon(Icons.search)),
+          PopupMenuButton(
+              // add icon, by default "3 dot" icon
+              // icon: Icon(Icons.book)
+              itemBuilder: (context) {
+            return [
+              const PopupMenuItem<int>(
+                value: 0,
+                child: Text("Barter Request"),
+              ),
+              const PopupMenuItem<int>(
+                value: 1,
+                child: Text("Buyer Barter Item Process"),
+              ),
+              const PopupMenuItem<int>(
+                value: 2,
+                child: Text("Seller Barter Item Process"),
+              ),
+            ];
+          }, onSelected: (value) async {
+            if (value == 0) {
+              if (widget.user.id.toString() == "na") {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Please login/register an account")));
+                return;
+              }
+              await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (content) => BarterRequest(
+                            seller: widget.user,
+                          )));
+            } else if (value == 1) {
+              if (widget.user.id.toString() == "na") {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Please login/register an account")));
+                return;
+              }
+              await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (content) => BarterProcessScreen(
+                            user: widget.user,
+                          )));
+            } else if (value == 2) {
+              if (widget.user.id.toString() == "na") {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Please login/register an account")));
+                return;
+              }
+              await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (content) => BarterSellerScreen(
+                            user: widget.user,
+                          )));
+            }
+          })
         ],
       ),
       body: RefreshIndicator(
@@ -64,11 +125,9 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
             ? Column(
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(
-                        width: 300,
-                      ),
                       ElevatedButton(
                           onPressed: goToUserItemScreen,
                           child: const Text("Users Item")),
@@ -84,18 +143,19 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
             : Column(
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(
-                        width: 300,
-                      ),
                       ElevatedButton(
                           onPressed: goToUserItemScreen,
                           child: const Text("Users Item")),
+                      SizedBox(
+                        width: 10,
+                      )
                     ],
                   ),
                   Text(
-                    "Total Number of Item : ${itemsList.length} ",
+                    "Total Number of Item : $totalresult ",
                     style: const TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
@@ -110,6 +170,14 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
                           onTap: () {
                             Item items =
                                 Item.fromJson(itemsList[index].toJson());
+                            if (widget.user.id == items.userId) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          "You cannot barter your own item")));
+                              return;
+                            }
+
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -119,7 +187,7 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
                           },
                           child: Column(children: [
                             SizedBox(
-                              height: 130,
+                              height: 1 / 5 * screenH,
                               child: CachedNetworkImage(
                                 width: screenW,
                                 fit: BoxFit.cover,
@@ -313,7 +381,6 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
       totalresult = 0;
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
-        print(jsondata);
         if (jsondata['status'] == "success") {
           numofpage = int.parse(jsondata['numofpage']);
           numberofresult = int.parse(jsondata['numberofresult']);
@@ -325,6 +392,30 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
           });
         }
         setState(() {});
+      }
+    });
+  }
+
+  void loadUser() {
+    if (widget.user.id.toString() == "na") {
+      return;
+    }
+    print(widget.user.id.toString());
+    http.post(Uri.parse("${MyConfig().server}/barterit/php/login_user.php"),
+        body: {
+          "user_id": widget.user.id.toString(),
+          "email": widget.user.email.toString(),
+          "password": widget.user.password.toString()
+        }).then((response) {
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(response.body);
+        print(response.body);
+        if (jsondata['status'] == "success") {
+          User updatedUser = User.fromJson(jsondata['data']);
+          setState(() {
+            widget.user = updatedUser;
+          });
+        }
       }
     });
   }

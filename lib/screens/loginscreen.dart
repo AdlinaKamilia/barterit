@@ -238,7 +238,6 @@ class _LoginScreenState extends State<LoginScreen> {
           var jsondata = jsonDecode(response.body);
           if (jsondata['status'] == 'success') {
             User user = User.fromJson(jsondata['data']);
-            print(user.email);
             ScaffoldMessenger.of(context)
                 .showSnackBar(const SnackBar(content: Text("Login Success")));
             Navigator.pushAndRemoveUntil(
@@ -252,9 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         }
       }).timeout(const Duration(seconds: 5), onTimeout: () {});
-    } on TimeoutException catch (_) {
-      print("Time Out");
-    }
+    } on TimeoutException catch (_) {}
   }
 
   Future<void> saveremovepreferences(bool value) async {
