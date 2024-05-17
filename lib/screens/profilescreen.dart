@@ -24,7 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late double screenH, screenW;
   late User user;
   var creditA = 0.0;
-  bool _passwordVisibility = true;
+  final bool _passwordVisibility = true;
   final TextEditingController _amountEC = TextEditingController(text: "0.00");
   final TextEditingController _passEditingC = TextEditingController();
   final TextEditingController _nameEditingC = TextEditingController();
@@ -382,11 +382,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           "userId": widget.user.id,
         }).then((response) {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == "success") {
-          Credit userCredit = Credit.fromJson(jsondata['data']);
-          creditA = double.parse(userCredit.creditAdd.toString());
+        try {
+          var jsondata = jsonDecode(response.body);
+
+          if (jsondata['status'] == "success") {
+            Credit userCredit = Credit.fromJson(jsondata['data']);
+            creditA = double.parse(userCredit.creditAdd.toString());
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
+
         setState(() {});
       }
     });
@@ -455,16 +463,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           "userid": widget.user.id,
           "newname": newname,
         }).then((response) {
-      var jsondata = jsonDecode(response.body);
-      if (response.statusCode == 200 && jsondata['status'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Successfully updated")));
-        setState(() {
-          widget.user.name = newname;
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Information failed to be updated")));
+      try {
+        var jsondata = jsonDecode(response.body);
+        if (response.statusCode == 200 && jsondata['status'] == 'success') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Successfully updated")));
+          setState(() {
+            widget.user.name = newname;
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Information failed to be updated")));
+        }
+        // Continue processing the parsed JSON data
+      } catch (e) {
+        print("JSON Parsing Error: $e");
+        // Handle the error, show a user-friendly message, etc.
       }
     });
   }
@@ -533,16 +547,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           "userid": widget.user.id,
           "newphone": newphone,
         }).then((response) {
-      var jsondata = jsonDecode(response.body);
-      if (response.statusCode == 200 && jsondata['status'] == 'success') {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Succesfully updated")));
-        setState(() {
-          widget.user.phone = newphone;
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Information failed to be updated")));
+      try {
+        var jsondata = jsonDecode(response.body);
+        if (response.statusCode == 200 && jsondata['status'] == 'success') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Succesfully updated")));
+          setState(() {
+            widget.user.phone = newphone;
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Information failed to be updated")));
+        }
+        // Continue processing the parsed JSON data
+      } catch (e) {
+        print("JSON Parsing Error: $e");
+        // Handle the error, show a user-friendly message, etc.
       }
     });
   }
@@ -616,13 +636,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           "oldpass": _oldPassEditingC.text,
           "newpass": _newPassEditingC.text,
         }).then((response) {
-      var jsondata = jsonDecode(response.body);
-      if (response.statusCode == 200 && jsondata['status'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Successfully updated")));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Information failed to be updated")));
+      try {
+        var jsondata = jsonDecode(response.body);
+        if (response.statusCode == 200 && jsondata['status'] == 'success') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Successfully updated")));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Information failed to be updated")));
+        }
+        // Continue processing the parsed JSON data
+      } catch (e) {
+        print("JSON Parsing Error: $e");
+        // Handle the error, show a user-friendly message, etc.
       }
     });
   }

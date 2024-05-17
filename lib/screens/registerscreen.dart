@@ -365,16 +365,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "password": password,
         }).then((response) {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
-          insertCredit(jsondata['data'].toString());
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Registration Successfully")));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Registrations Failed")));
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            insertCredit(jsondata['data'].toString());
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Registration Successfully")));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Registrations Failed")));
+          }
+          Navigator.pop(context);
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
-        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Registrations Failed")));
@@ -391,11 +397,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "creditHold": "0",
         }).then((response) {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
-          print("credit settle");
-        } else {
-          print("credit failed");
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            print("credit settle");
+          } else {
+            print("credit failed");
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       } else {
         print("credit failed");

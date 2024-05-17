@@ -56,7 +56,7 @@ class _UserItemScreenState extends State<UserItemScreen> {
               )
             : Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Text(
@@ -70,45 +70,114 @@ class _UserItemScreenState extends State<UserItemScreen> {
                       child: GridView.count(
                     crossAxisCount: axisCount,
                     children: List.generate(itemsList.length, (index) {
-                      return Card(
-                        child: InkWell(
-                          onTap: () {
-                            Item items =
-                                Item.fromJson(itemsList[index].toJson());
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (content) => ItemDetail(
-                                        user: widget.user, item: items)));
-                            loadUserItems(1);
-                          },
-                          child: Column(children: [
-                            SizedBox(
-                              height: 1 / 5 * screenH,
-                              child: CachedNetworkImage(
-                                width: screenW,
-                                fit: BoxFit.cover,
-                                imageUrl:
-                                    "${MyConfig().server}/barterit/assets/items/${itemsList[index].itemId}_1.png",
-                                placeholder: (context, url) =>
-                                    const LinearProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
+                      return SizedBox.expand(
+                        child: Card(
+                          child: InkWell(
+                            onLongPress: () {
+                              Item itemss =
+                                  Item.fromJson(itemsList[index].toJson());
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10))),
+                                      title: const Text(
+                                        "Do you want to delete this item?",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      actions: <Widget>[
+                                        ElevatedButton(
+                                            onPressed: () async {
+                                              print("hello");
+                                              print(itemss.itemId);
+                                              http.post(
+                                                  Uri.parse(
+                                                      "${MyConfig().server}/barterit/php/deleteitems.php"),
+                                                  body: {
+                                                    "itemid": itemss.itemId,
+                                                  }).then((response) {
+                                                if (response.statusCode ==
+                                                    200) {
+                                                  try {
+                                                    print(response.body);
+                                                    var jsondata = jsonDecode(
+                                                        response.body);
+                                                    if (jsondata['status'] ==
+                                                        "success") {
+                                                      print(
+                                                          "successfully deleted");
+                                                      Navigator.pop(context);
+                                                    }
+                                                    // Continue processing the parsed JSON data
+                                                  } catch (e) {
+                                                    print(
+                                                        "JSON Parsing Error: $e");
+                                                    // Handle the error, show a user-friendly message, etc.
+                                                  }
+                                                  loadUserItems(1);
+                                                  setState(() {});
+                                                } else {
+                                                  print("not found");
+                                                }
+                                              });
+                                            },
+                                            child: const Text("Yes")),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text("No")),
+                                      ],
+                                    );
+                                  });
+                            },
+                            onTap: () {
+                              Item items =
+                                  Item.fromJson(itemsList[index].toJson());
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (content) => ItemDetail(
+                                          user: widget.user, item: items)));
+                              loadUserItems(1);
+                            },
+                            child: Column(children: [
+                              SizedBox(
+                                height: 100,
+                                child: CachedNetworkImage(
+                                  width: screenW,
+                                  fit: BoxFit.cover,
+                                  imageUrl:
+                                      "${MyConfig().server}/barterit/assets/items/${itemsList[index].itemId}_1.png",
+                                  placeholder: (context, url) =>
+                                      const LinearProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ),
                               ),
-                            ),
-                            Text(
-                              itemsList[index].itemName.toString(),
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                            Text(
-                              "RM ${double.parse(itemsList[index].itemPrice.toString()).toStringAsFixed(2)}",
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                            Text(
-                              "${itemsList[index].itemQuantity} available",
-                              style: const TextStyle(fontSize: 10),
-                            ),
-                          ]),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      itemsList[index].itemName.toString(),
+                                      style: const TextStyle(fontSize: 20),
+                                    ),
+                                    Text(
+                                      "RM ${double.parse(itemsList[index].itemPrice.toString()).toStringAsFixed(2)}",
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    Text(
+                                      "${itemsList[index].itemQuantity} available",
+                                      style: const TextStyle(fontSize: 10),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]),
+                          ),
                         ),
                       );
                     }),
@@ -201,15 +270,22 @@ class _UserItemScreenState extends State<UserItemScreen> {
       itemsList.clear();
 
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == "success") {
-          numofpage = int.parse(jsondata['numofpage']);
-          numberofresult = int.parse(jsondata['numberofresult']);
-          var extractData = jsondata['data'];
-          extractData['items'].forEach((v) {
-            itemsList.add(Item.fromJson(v));
-          });
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == "success") {
+            numofpage = int.parse(jsondata['numofpage']);
+            numberofresult = int.parse(jsondata['numberofresult']);
+            var extractData = jsondata['data'];
+            extractData['items'].forEach((v) {
+              itemsList.add(Item.fromJson(v));
+            });
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
+
         setState(() {});
       }
     });

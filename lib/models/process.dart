@@ -87,34 +87,34 @@ class Process {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['barter_id'] = this.barterId;
-    data['seller_id'] = this.sellerId;
-    data['buyer_id'] = this.buyerId;
-    data['seller_item_id'] = this.sellerItemId;
-    data['buyer_item_id'] = this.buyerItemId;
-    data['status'] = this.status;
-    data['insert_time'] = this.insertTime;
-    data['buyer_item_name'] = this.buyerItemName;
-    data['buyer_item_description'] = this.buyerItemDescription;
-    data['buyer_item_price'] = this.buyerItemPrice;
-    data['buyer_item_qty'] = this.buyerItemQty;
-    data['buyer_item_type'] = this.buyerItemType;
-    data['buyer_item_lat'] = this.buyerItemLat;
-    data['buyer_item_long'] = this.buyerItemLong;
-    data['buyer_item_state'] = this.buyerItemState;
-    data['buyer_item_local'] = this.buyerItemLocal;
-    data['buyer_item_date'] = this.buyerItemDate;
-    data['seller_item_name'] = this.sellerItemName;
-    data['seller_item_description'] = this.sellerItemDescription;
-    data['seller_item_price'] = this.sellerItemPrice;
-    data['seller_item_qty'] = this.sellerItemQty;
-    data['seller_item_type'] = this.sellerItemType;
-    data['seller_item_lat'] = this.sellerItemLat;
-    data['seller_item_long'] = this.sellerItemLong;
-    data['seller_item_state'] = this.sellerItemState;
-    data['seller_item_local'] = this.sellerItemLocal;
-    data['seller_item_date'] = this.sellerItemDate;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['barter_id'] = barterId;
+    data['seller_id'] = sellerId;
+    data['buyer_id'] = buyerId;
+    data['seller_item_id'] = sellerItemId;
+    data['buyer_item_id'] = buyerItemId;
+    data['status'] = status;
+    data['insert_time'] = insertTime;
+    data['buyer_item_name'] = buyerItemName;
+    data['buyer_item_description'] = buyerItemDescription;
+    data['buyer_item_price'] = buyerItemPrice;
+    data['buyer_item_qty'] = buyerItemQty;
+    data['buyer_item_type'] = buyerItemType;
+    data['buyer_item_lat'] = buyerItemLat;
+    data['buyer_item_long'] = buyerItemLong;
+    data['buyer_item_state'] = buyerItemState;
+    data['buyer_item_local'] = buyerItemLocal;
+    data['buyer_item_date'] = buyerItemDate;
+    data['seller_item_name'] = sellerItemName;
+    data['seller_item_description'] = sellerItemDescription;
+    data['seller_item_price'] = sellerItemPrice;
+    data['seller_item_qty'] = sellerItemQty;
+    data['seller_item_type'] = sellerItemType;
+    data['seller_item_lat'] = sellerItemLat;
+    data['seller_item_long'] = sellerItemLong;
+    data['seller_item_state'] = sellerItemState;
+    data['seller_item_local'] = sellerItemLocal;
+    data['seller_item_date'] = sellerItemDate;
     return data;
   }
 }

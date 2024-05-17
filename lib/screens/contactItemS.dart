@@ -267,7 +267,7 @@ class _ContactItemSState extends State<ContactItemS> {
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
-                          Color.fromARGB(255, 174, 46, 37),
+                          const Color.fromARGB(255, 174, 46, 37),
                         ),
                       ),
                       child: const Text("Cancel Barter"),
@@ -296,7 +296,7 @@ class _ContactItemSState extends State<ContactItemS> {
                           fontWeight: FontWeight.bold,
                           fontFamily: "Times New Roman"),
                     ),
-                    content: Container(
+                    content: SizedBox(
                       height: 1 / 2.5 * screenHeight,
                       child: SingleChildScrollView(
                         child: Column(
@@ -370,7 +370,7 @@ class _ContactItemSState extends State<ContactItemS> {
                   );
                 });
           },
-          child: Icon(Icons.phone),
+          child: const Icon(Icons.phone),
         ));
   }
 
@@ -380,11 +380,17 @@ class _ContactItemSState extends State<ContactItemS> {
           "seller_id": widget.processItem.sellerId.toString(),
         }).then((response) {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == "success") {
-          sName = jsondata['data']['name'].toString();
-          sEmail = jsondata['data']['email'].toString();
-          sPhone = jsondata['data']['phone'].toString();
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == "success") {
+            sName = jsondata['data']['name'].toString();
+            sEmail = jsondata['data']['email'].toString();
+            sPhone = jsondata['data']['phone'].toString();
+          } // Replace 'data' with your JSON string or data source
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       }
       setState(() {});
@@ -398,11 +404,17 @@ class _ContactItemSState extends State<ContactItemS> {
           "buyer_id": widget.processItem.buyerId.toString(),
         }).then((response) {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == "success") {
-          bName = jsondata['data']['name'].toString();
-          bEmail = jsondata['data']['email'].toString();
-          bPhone = jsondata['data']['phone'].toString();
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == "success") {
+            bName = jsondata['data']['name'].toString();
+            bEmail = jsondata['data']['email'].toString();
+            bPhone = jsondata['data']['phone'].toString();
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       }
       setState(() {});
@@ -418,29 +430,35 @@ class _ContactItemSState extends State<ContactItemS> {
           "buyerAns": "Done",
         }).then((response) async {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        print(response.body);
-        if (jsondata['status'] == 'success') {
-          Navigator.pop(context);
-          var statusProcess = jsondata['data'];
-          print(statusProcess);
+        try {
+          var jsondata = jsonDecode(response.body);
+          print(response.body);
+          if (jsondata['status'] == 'success') {
+            Navigator.pop(context);
+            var statusProcess = jsondata['data'];
+            print(statusProcess);
 
-          if (statusProcess == "Completed") {
-            updateCredit(statusProcess);
+            if (statusProcess == "Completed") {
+              updateCredit(statusProcess);
+            }
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Process Updated")));
+            await Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (content) => MainScreen(
+                        user: widget.user,
+                      )),
+              (Route<dynamic> route) => false,
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Process Failed To Be Updated")));
           }
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Updated")));
-          await Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (content) => MainScreen(
-                      user: widget.user,
-                    )),
-            (Route<dynamic> route) => false,
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Process Failed To Be Updated")));
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       } else {
         ScaffoldMessenger.of(context)
@@ -458,28 +476,34 @@ class _ContactItemSState extends State<ContactItemS> {
           "sellerAns": "Done",
         }).then((response) async {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        print(response.body);
-        if (jsondata['status'] == 'success') {
-          Navigator.pop(context);
-          var statusProcess = jsondata['data'];
-          print(statusProcess);
-          if (statusProcess == "Completed") {
-            updateCredit(statusProcess);
+        try {
+          var jsondata = jsonDecode(response.body);
+          print(response.body);
+          if (jsondata['status'] == 'success') {
+            Navigator.pop(context);
+            var statusProcess = jsondata['data'];
+            print(statusProcess);
+            if (statusProcess == "Completed") {
+              updateCredit(statusProcess);
+            }
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Process Updated")));
+            await Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (content) => MainScreen(
+                        user: widget.user,
+                      )),
+              (Route<dynamic> route) => false,
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Process Failed To Be Updated")));
           }
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Updated")));
-          await Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (content) => MainScreen(
-                      user: widget.user,
-                    )),
-            (Route<dynamic> route) => false,
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Process Failed To Be Updated")));
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       } else {
         ScaffoldMessenger.of(context)
@@ -497,25 +521,31 @@ class _ContactItemSState extends State<ContactItemS> {
           "buyerAns": "Cancel",
         }).then((response) async {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
-          Navigator.pop(context);
-          var statusProcess = jsondata['data'];
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            Navigator.pop(context);
+            var statusProcess = jsondata['data'];
 
-          updateCredit(statusProcess);
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Updated")));
-          await Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (content) => MainScreen(
-                      user: widget.user,
-                    )),
-            (Route<dynamic> route) => false,
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Process Failed To Be Updated")));
+            updateCredit(statusProcess);
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Process Updated")));
+            await Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (content) => MainScreen(
+                        user: widget.user,
+                      )),
+              (Route<dynamic> route) => false,
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Process Failed To Be Updated")));
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       } else {
         ScaffoldMessenger.of(context)
@@ -533,24 +563,30 @@ class _ContactItemSState extends State<ContactItemS> {
           "sellerAns": "Cancel",
         }).then((response) async {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
-          Navigator.pop(context);
-          var statusProcess = jsondata['data'];
-          updateCredit(statusProcess);
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Updated")));
-          await Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (content) => MainScreen(
-                      user: widget.user,
-                    )),
-            (Route<dynamic> route) => false,
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Process Failed To Be Updated")));
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            Navigator.pop(context);
+            var statusProcess = jsondata['data'];
+            updateCredit(statusProcess);
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Process Updated")));
+            await Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (content) => MainScreen(
+                        user: widget.user,
+                      )),
+              (Route<dynamic> route) => false,
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Process Failed To Be Updated")));
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       } else {
         ScaffoldMessenger.of(context)
@@ -569,14 +605,20 @@ class _ContactItemSState extends State<ContactItemS> {
           "processStatus": statusP.toString(),
         }).then((response) async {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
-          if (statusP.toString() != "Rejected") {
-            updateItem();
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            if (statusP.toString() != "Rejected") {
+              updateItem();
+            }
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Process Failed")));
           }
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Failed")));
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       } else {
         ScaffoldMessenger.of(context)
@@ -596,12 +638,18 @@ class _ContactItemSState extends State<ContactItemS> {
           "processId": widget.processItem.barterId.toString(),
         }).then((response) async {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
-          print("Success");
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Failed")));
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            print("Success");
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Process Failed")));
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       } else {
         ScaffoldMessenger.of(context)

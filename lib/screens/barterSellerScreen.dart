@@ -38,7 +38,7 @@ class _BarterSellerScreenState extends State<BarterSellerScreen> {
       ),
       body: Container(
         child: processList.isEmpty
-            ? Center(
+            ? const Center(
                 child: Text("No Items Registered"),
               )
             : SingleChildScrollView(
@@ -77,7 +77,7 @@ class _BarterSellerScreenState extends State<BarterSellerScreen> {
                               child: Column(
                                 children: [
                                   SizedBox(
-                                    height: 1 / 5 * screenHeight,
+                                    height: 100,
                                     child: CachedNetworkImage(
                                       width: screenWidth,
                                       fit: BoxFit.cover,
@@ -123,13 +123,19 @@ class _BarterSellerScreenState extends State<BarterSellerScreen> {
     ).then((response) {
       processList.clear();
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        print(response.body);
-        if (jsondata['status'] == "success") {
-          var extractdata = jsondata['data'];
-          extractdata['process'].forEach((v) {
-            processList.add(Process.fromJson(v));
-          });
+        try {
+          var jsondata = jsonDecode(response.body);
+          print(response.body);
+          if (jsondata['status'] == "success") {
+            var extractdata = jsondata['data'];
+            extractdata['process'].forEach((v) {
+              processList.add(Process.fromJson(v));
+            });
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       }
       setState(() {});

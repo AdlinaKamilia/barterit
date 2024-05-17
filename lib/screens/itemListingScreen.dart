@@ -149,7 +149,7 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
                       ElevatedButton(
                           onPressed: goToUserItemScreen,
                           child: const Text("Users Item")),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       )
                     ],
@@ -187,7 +187,7 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
                           },
                           child: Column(children: [
                             SizedBox(
-                              height: 1 / 5 * screenH,
+                              height: 100,
                               child: CachedNetworkImage(
                                 width: screenW,
                                 fit: BoxFit.cover,
@@ -296,19 +296,25 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
       itemsList.clear();
       totalresult = 0;
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == "success") {
-          numofpage = int.parse(jsondata['numofpage']);
-          numberofresult = int.parse(jsondata['numberofresult']);
-          var extractdata = jsondata['data'];
-          extractdata['items'].forEach((v) {
-            itemsList.add(Item.fromJson(v));
-            totalresult = totalresult + 1;
-          });
-        }
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == "success") {
+            numofpage = int.parse(jsondata['numofpage']);
+            numberofresult = int.parse(jsondata['numberofresult']);
+            var extractdata = jsondata['data'];
+            extractdata['items'].forEach((v) {
+              itemsList.add(Item.fromJson(v));
+              totalresult = totalresult + 1;
+            });
+          }
 
-        if (mounted) {
-          setState(() {});
+          if (mounted) {
+            setState(() {});
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       }
     });
@@ -380,17 +386,24 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
       itemsList.clear();
       totalresult = 0;
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == "success") {
-          numofpage = int.parse(jsondata['numofpage']);
-          numberofresult = int.parse(jsondata['numberofresult']);
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == "success") {
+            numofpage = int.parse(jsondata['numofpage']);
+            numberofresult = int.parse(jsondata['numberofresult']);
 
-          var extractData = jsondata['data'];
-          extractData['items'].forEach((v) {
-            itemsList.add(Item.fromJson(v));
-            totalresult = totalresult + 1;
-          });
+            var extractData = jsondata['data'];
+            extractData['items'].forEach((v) {
+              itemsList.add(Item.fromJson(v));
+              totalresult = totalresult + 1;
+            });
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
+
         setState(() {});
       }
     });
@@ -408,13 +421,20 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
           "password": widget.user.password.toString()
         }).then((response) {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        print(response.body);
-        if (jsondata['status'] == "success") {
-          User updatedUser = User.fromJson(jsondata['data']);
-          setState(() {
-            widget.user = updatedUser;
-          });
+        try {
+          var jsondata = jsonDecode(response.body);
+
+          print(response.body);
+          if (jsondata['status'] == "success") {
+            User updatedUser = User.fromJson(jsondata['data']);
+            setState(() {
+              widget.user = updatedUser;
+            });
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       }
     });

@@ -21,12 +21,12 @@ class Credit {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['creditId'] = this.creditId;
-    data['userId'] = this.userId;
-    data['creditAdd'] = this.creditAdd;
-    data['creditHold'] = this.creditHold;
-    data['creditTime'] = this.creditTime;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['creditId'] = creditId;
+    data['userId'] = userId;
+    data['creditAdd'] = creditAdd;
+    data['creditHold'] = creditHold;
+    data['creditTime'] = creditTime;
     return data;
   }
 }

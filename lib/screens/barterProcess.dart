@@ -32,11 +32,11 @@ class _BarterProcessScreenState extends State<BarterProcessScreen> {
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Buyer Barter Process"),
+        title: const Text("Buyer Barter Process"),
       ),
       body: Container(
         child: processList.isEmpty
-            ? Center(
+            ? const Center(
                 child: Text("No Items Registered"),
               )
             : SingleChildScrollView(
@@ -75,7 +75,7 @@ class _BarterProcessScreenState extends State<BarterProcessScreen> {
                               child: Column(
                                 children: [
                                   SizedBox(
-                                    height: 1 / 5 * screenHeight,
+                                    height: 100,
                                     child: CachedNetworkImage(
                                       width: screenWidth,
                                       fit: BoxFit.cover,
@@ -121,13 +121,20 @@ class _BarterProcessScreenState extends State<BarterProcessScreen> {
     ).then((response) {
       processList.clear();
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        print(response.body);
-        if (jsondata['status'] == "success") {
-          var extractdata = jsondata['data'];
-          extractdata['process'].forEach((v) {
-            processList.add(Process.fromJson(v));
-          });
+        try {
+          var jsondata = jsonDecode(response
+              .body); // Replace 'data' with your JSON string or data source
+          // Continue processing the parsed JSON data
+          print(response.body);
+          if (jsondata['status'] == "success") {
+            var extractdata = jsondata['data'];
+            extractdata['process'].forEach((v) {
+              processList.add(Process.fromJson(v));
+            });
+          }
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       }
       setState(() {});

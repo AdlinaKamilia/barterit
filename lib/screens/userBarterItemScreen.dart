@@ -91,7 +91,7 @@ class _UserBarterItemState extends State<UserBarterItem> {
                           child: Column(
                             children: [
                               SizedBox(
-                                height: 1 / 5 * screenH,
+                                height: 100,
                                 child: CachedNetworkImage(
                                   width: screenW,
                                   fit: BoxFit.cover,
@@ -171,7 +171,7 @@ class _UserBarterItemState extends State<UserBarterItem> {
                         fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"),
                   ),
-                  content: Container(
+                  content: SizedBox(
                     height: 1 / 2 * screenH,
                     width: screenW,
                     child: const SingleChildScrollView(
@@ -258,15 +258,22 @@ class _UserBarterItemState extends State<UserBarterItem> {
       itemsList.clear();
 
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == "success") {
-          numofpage = int.parse(jsondata['numofpage']);
-          numberofresult = int.parse(jsondata['numberofresult']);
-          var extractData = jsondata['data'];
-          extractData['items'].forEach((v) {
-            itemsList.add(Item.fromJson(v));
-          });
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == "success") {
+            numofpage = int.parse(jsondata['numofpage']);
+            numberofresult = int.parse(jsondata['numberofresult']);
+            var extractData = jsondata['data'];
+            extractData['items'].forEach((v) {
+              itemsList.add(Item.fromJson(v));
+            });
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
+
         setState(() {});
       }
     });
@@ -290,15 +297,21 @@ class _UserBarterItemState extends State<UserBarterItem> {
           "sellerItem": widget.sellerItem.itemId.toString(),
         }).then((response) async {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
-          Process process = Process.fromJson(jsondata['data']);
-          holdCredit(process);
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Failed")));
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            Process process = Process.fromJson(jsondata['data']);
+            holdCredit(process);
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Process Failed")));
+          }
+          Navigator.pop(context);
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
-        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text("Insert Failed")));
@@ -315,21 +328,27 @@ class _UserBarterItemState extends State<UserBarterItem> {
           "processStatus": processI.status.toString(),
         }).then((response) async {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text(
-                  "Process successful, please wait for the other side confirmation")));
-          await Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (content) => MainScreen(
-                        user: widget.buyerUser,
-                      )));
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Failed")));
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text(
+                    "Process successful, please wait for the other side confirmation")));
+            await Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (content) => MainScreen(
+                          user: widget.buyerUser,
+                        )));
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Process Failed")));
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       } else {
         ScaffoldMessenger.of(context)

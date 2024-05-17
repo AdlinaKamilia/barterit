@@ -122,7 +122,7 @@ class _BarterRequestState extends State<BarterRequest> {
                                                       fontFamily:
                                                           "Times New Roman"),
                                                 ),
-                                                content: Container(
+                                                content: SizedBox(
                                                   height: 1 / 2 * screenHeight,
                                                   child:
                                                       const SingleChildScrollView(
@@ -303,13 +303,19 @@ class _BarterRequestState extends State<BarterRequest> {
         }).then((response) {
       processList.clear();
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        print(response.body);
-        if (jsondata['status'] == "success") {
-          var extractdata = jsondata['data'];
-          extractdata['process'].forEach((v) {
-            processList.add(Process.fromJson(v));
-          });
+        try {
+          var jsondata = jsonDecode(response.body);
+          print(response.body);
+          if (jsondata['status'] == "success") {
+            var extractdata = jsondata['data'];
+            extractdata['process'].forEach((v) {
+              processList.add(Process.fromJson(v));
+            });
+          } // Replace 'data' with your JSON string or data source
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       }
       setState(() {});
@@ -323,11 +329,17 @@ class _BarterRequestState extends State<BarterRequest> {
           "processStatus": "Confirm"
         }).then((response) {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == "success") {
-          holdCredit(index, "Confirm");
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Continued")));
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == "success") {
+            holdCredit(index, "Confirm");
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Process Continued")));
+          } // Replace 'data' with your JSON string or data source
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       }
     });
@@ -340,19 +352,25 @@ class _BarterRequestState extends State<BarterRequest> {
           "processStatus": "Reject"
         }).then((response) async {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == "success") {
-          holdCredit(index, "Reject");
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Aborted")));
-          await Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (content) => MainScreen(
-                      user: widget.seller,
-                    )),
-            (Route<dynamic> route) => false,
-          );
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == "success") {
+            holdCredit(index, "Reject");
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Process Aborted")));
+            await Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (content) => MainScreen(
+                        user: widget.seller,
+                      )),
+              (Route<dynamic> route) => false,
+            );
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       }
     });
@@ -366,22 +384,28 @@ class _BarterRequestState extends State<BarterRequest> {
           "processStatus": status,
         }).then((response) async {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Continued")));
-          await Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (content) => MainScreen(
-                      user: widget.seller,
-                    )),
-            (Route<dynamic> route) => false,
-          );
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Process Failed")));
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Process Continued")));
+            await Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (content) => MainScreen(
+                        user: widget.seller,
+                      )),
+              (Route<dynamic> route) => false,
+            );
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Process Failed")));
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       } else {
         ScaffoldMessenger.of(context)

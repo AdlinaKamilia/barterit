@@ -69,7 +69,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: screenH,
           width: screenW,
           child: Column(
@@ -425,22 +425,28 @@ class _NewItemScreenState extends State<NewItemScreen> {
               base64Images), // Pass the base64 encoded images to the backend
         }).then((response) {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Insert Success")));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (content) => UserItemScreen(
+                          user: widget.user,
+                        )));
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Insert Failed")));
+          }
           Navigator.pop(context);
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Insert Success")));
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (content) => UserItemScreen(
-                        user: widget.user,
-                      )));
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Insert Failed")));
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
-        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text("Insert Failed")));

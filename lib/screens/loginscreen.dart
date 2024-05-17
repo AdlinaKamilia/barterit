@@ -235,19 +235,25 @@ class _LoginScreenState extends State<LoginScreen> {
             'password': password,
           }).then((response) {
         if (response.statusCode == 200) {
-          var jsondata = jsonDecode(response.body);
-          if (jsondata['status'] == 'success') {
-            User user = User.fromJson(jsondata['data']);
-            ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text("Login Success")));
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => MainScreen(user: user)),
-              (Route<dynamic> route) => false,
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Login Failed: Incorrect Email/Password")));
+          try {
+            var jsondata = jsonDecode(response.body);
+            if (jsondata['status'] == 'success') {
+              User user = User.fromJson(jsondata['data']);
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(content: Text("Login Success")));
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => MainScreen(user: user)),
+                (Route<dynamic> route) => false,
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text("Login Failed: Incorrect Email/Password")));
+            }
+            // Continue processing the parsed JSON data
+          } catch (e) {
+            print("JSON Parsing Error: $e");
+            // Handle the error, show a user-friendly message, etc.
           }
         }
       }).timeout(const Duration(seconds: 5), onTimeout: () {});

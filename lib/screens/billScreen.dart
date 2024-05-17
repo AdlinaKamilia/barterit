@@ -111,20 +111,26 @@ class _BillScreenState extends State<BillScreen> {
           "creditHold": creditHold,
         }).then((response) {
       if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Inserting Credit Success")));
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (content) => MainScreen(user: widget.user),
-            ),
-            (Route<dynamic> route) => false,
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Insert Credit Failed")));
+        try {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Inserting Credit Success")));
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (content) => MainScreen(user: widget.user),
+              ),
+              (Route<dynamic> route) => false,
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Insert Credit Failed")));
+          }
+          // Continue processing the parsed JSON data
+        } catch (e) {
+          print("JSON Parsing Error: $e");
+          // Handle the error, show a user-friendly message, etc.
         }
       } else {
         ScaffoldMessenger.of(context)
